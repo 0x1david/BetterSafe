@@ -1,6 +1,6 @@
 pub use super::TerminalCommand;
-use std::process::exit;
 use std::collections::HashSet;
+use std::process::exit;
 pub fn parse(args: Vec<String>) {
     let arg = match args.get(0) {
         Some(arg) => arg,
@@ -46,7 +46,6 @@ pub fn process_short_arg(arg: &str) -> &str {
         previous_flags.insert(flag);
     }
     arg
-
 }
 pub fn process_long_arg(arg: &str) {
     unimplemented!();

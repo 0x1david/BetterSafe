@@ -1,9 +1,9 @@
 mod utils;
 
 use std::env::args;
+use std::process::exit;
 use utils::parse;
 use utils::TerminalCommand;
-use std::process::exit;
 
 fn main() {
     let terminal_command = TerminalCommand::new();
