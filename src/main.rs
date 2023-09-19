@@ -6,7 +6,7 @@ use utils::parse;
 use utils::TerminalCommand;
 
 fn main() {
-    let unparsed_command = TerminalCommand::new();
+    let mut unparsed_command = TerminalCommand::new();
     let mut args: Vec<String> = args().collect();
     if !args.is_empty() {
         args.remove(0);
@@ -14,5 +14,5 @@ fn main() {
         eprintln!("No arguments provided");
         exit(1);
     }
-    let terminal_command = parse(args, unparsed_command);
+    let terminal_command = parse(args, &mut unparsed_command);
 }

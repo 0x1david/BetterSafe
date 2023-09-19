@@ -24,6 +24,7 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) {
         } else if second_char != '-' {
             process_short_arg(&arg[1..]);
             for character in arg[1..].chars() {
+                eprintln!("character= {}", character);
                 terminal_command.add_arg(character)
             }
         } else {
@@ -37,7 +38,7 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) {
 }
 
 pub fn process_short_arg(arg: &str) -> Vec<char> {
-    let allowed_flags = ['j', 'k'];
+    let allowed_flags = ['t', 'e', 's'];
     let mut previous_flags = HashSet::new();
     let mut arg_chars = Vec::new();
 
