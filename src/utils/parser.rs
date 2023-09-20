@@ -1,3 +1,4 @@
+use super::get_flag_map;
 pub use super::TerminalCommand;
 use std::collections::HashSet;
 use std::process::exit;
@@ -20,7 +21,8 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) {
         };
 
         if second_char == '-' && arg.len() > 2 {
-            process_long_arg(&arg[2..]);
+            let flag = process_long_arg(&arg[2..]);
+            terminal_command.add_arg(flag);
         } else if second_char != '-' {
             process_short_arg(&arg[1..]);
             for character in arg[1..].chars() {
@@ -56,9 +58,14 @@ pub fn process_short_arg(arg: &str) -> Vec<char> {
     }
     arg_chars
 }
-pub fn process_long_arg(arg: &str) {
-    unimplemented!();
+pub fn process_long_arg(arg: &str) -> char {
+    let flag_map = get_flag_map();
+    *flag_map.get(arg).unwrap_or_else(|| {
+        eprintln!("Unknown argument --{}", arg);
+        exit(1);
+    })
 }
+
 pub fn process_path(path: &str) {
     unimplemented!();
 }
