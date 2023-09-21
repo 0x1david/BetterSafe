@@ -12,9 +12,11 @@ impl TerminalCommand {
     }
     pub fn add_path(&mut self, path: &str) {
         self.path = path.to_string();
+        println!("{}", path)
     }
     pub fn add_arg(&mut self, arg: char) {
         self.args.push(arg);
+        println!("{}", arg);
     }
     pub fn execute_command(&self) {
         unimplemented!();

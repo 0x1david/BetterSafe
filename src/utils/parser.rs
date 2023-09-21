@@ -9,7 +9,7 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) {
         None => return,
     };
 
-    let first_char = arg.chars().nth(0).unwrap();
+    let first_char = arg.chars().nth(0).expect("Parse with no arguments should have returned.");
 
     if first_char == '-' {
         let second_char = match arg.chars().nth(1) {
@@ -26,7 +26,6 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) {
         } else if second_char != '-' {
             process_short_arg(&arg[1..]);
             for character in arg[1..].chars() {
-                eprintln!("character= {}", character);
                 terminal_command.add_arg(character)
             }
         } else {
@@ -34,23 +33,23 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) {
             exit(1);
         }
     } else {
-        process_path(&arg);
+        terminal_command.add_path(&arg);
     }
     parse(args[1..].to_vec(), terminal_command)
 }
 
 pub fn process_short_arg(arg: &str) -> Vec<char> {
-    let allowed_flags = ['t', 'e', 's'];
+    let allowed_flags= ['v', 'V', 'r', 'f', 'F', 'i', 'h'];
     let mut previous_flags = HashSet::new();
     let mut arg_chars = Vec::new();
 
     for flag in arg.chars() {
         if !allowed_flags.contains(&flag) {
-            eprintln!("Invalid argument(s) following a '-'.");
+            eprintln!("Unknown argument '-{}' .", flag);
             exit(1);
         }
         if previous_flags.contains(&flag) {
-            eprintln!("Duplicated argument(s) following a '-'.");
+            eprintln!("Duplicated argument(s) '-{}'.", flag);
             exit(1);
         }
         previous_flags.insert(flag);
@@ -61,11 +60,7 @@ pub fn process_short_arg(arg: &str) -> Vec<char> {
 pub fn process_long_arg(arg: &str) -> char {
     let flag_map = get_flag_map();
     *flag_map.get(arg).unwrap_or_else(|| {
-        eprintln!("Unknown argument --{}", arg);
+        eprintln!("Unknown argument '--{}'", arg);
         exit(1);
     })
-}
-
-pub fn process_path(path: &str) {
-    unimplemented!();
 }
