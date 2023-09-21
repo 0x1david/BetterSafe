@@ -3,10 +3,10 @@ pub use super::TerminalCommand;
 use std::collections::HashSet;
 use std::process::exit;
 
-pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) {
+pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut TerminalCommand {
     let arg = match args.get(0) {
         Some(arg) => arg,
-        None => return,
+        None => return terminal_command,
     };
 
     let first_char = arg.chars().nth(0).expect("Parse with no arguments should have returned.");
