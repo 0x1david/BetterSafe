@@ -1,5 +1,7 @@
 use core::fmt;
+use std::marker::Copy;
 
+#[derive(Copy, Clone)]
 pub enum Arguments {
     Force,
     Interactive,
