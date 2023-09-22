@@ -1,6 +1,9 @@
+use super::Arguments;
+use super::get_flag_map;
+
 pub struct TerminalCommand {
     path: String,
-    args: Vec<char>,
+    args: Vec<Arguments>,
 }
 
 impl TerminalCommand {
@@ -12,11 +15,11 @@ impl TerminalCommand {
     }
     pub fn add_path(&mut self, path: &str) {
         self.path = path.to_string();
-        println!("{}", path)
+        println!("Path: {}", path)
     }
-    pub fn add_arg(&mut self, arg: char) {
+    pub fn add_arg(&mut self, arg: Arguments) {
         self.args.push(arg);
-        println!("{}", arg);
+        println!("Arg: {}", arg);
     }
     pub fn execute_command(&self) {
         unimplemented!();

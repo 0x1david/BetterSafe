@@ -1,4 +1,4 @@
-use super::get_flag_map;
+use super::{get_flag_map, Arguments};
 pub use super::TerminalCommand;
 use std::collections::HashSet;
 use std::process::exit;
@@ -57,7 +57,7 @@ pub fn process_short_arg(arg: &str) -> Vec<char> {
     }
     arg_chars
 }
-pub fn process_long_arg(arg: &str) -> char {
+pub fn process_long_arg(arg: &str) -> Arguments{
     let flag_map = get_flag_map();
     *flag_map.get(arg).unwrap_or_else(|| {
         eprintln!("Unknown argument '--{}'", arg);
