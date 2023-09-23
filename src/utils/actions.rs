@@ -1,6 +1,6 @@
+use super::constants::ARCHIVE_DIR;
 use std::fs;
 use std::process::exit;
-use super::constants::ARCHIVE_DIR;
 
 pub fn help() -> () {
     println!("You can use the same commands as in the rm command, refer to 'man rm'.");
@@ -13,11 +13,12 @@ pub fn version() -> () {
 }
 
 pub fn remove(path: &String) -> () {
-    println!("{} will be archived", path); 
+    println!("{} will be archived", path);
     match fs::rename(path, ARCHIVE_DIR) {
         Ok(()) => println!("{} has been archived", path),
         Err(e) => {
             eprintln!("Archiving Failed {}", e);
-            exit(1);}
+            exit(1);
+        }
     }
 }

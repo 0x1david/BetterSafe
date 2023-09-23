@@ -1,6 +1,4 @@
-use super::Arguments;
 pub use super::TerminalCommand;
-use std::collections::HashSet;
 use std::process::exit;
 
 pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut TerminalCommand {
@@ -9,7 +7,10 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
         None => return terminal_command,
     };
 
-    let first_char = arg.chars().nth(0).expect("Parse with no arguments should have returned.");
+    let first_char = arg
+        .chars()
+        .nth(0)
+        .expect("Parse with no arguments should have returned.");
 
     if first_char == '-' {
         let second_char = match arg.chars().nth(1) {
@@ -21,12 +22,10 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
         };
 
         if second_char == '-' && arg.len() > 2 {
-            let flag = process_long_arg(&arg[2..]);
-            terminal_command.add_arg(flag.to_string());
+            terminal_command.add_arg(&arg.to_string());
         } else if second_char != '-' {
-            process_short_arg(&arg[1..]);
             for character in arg[1..].chars() {
-                terminal_command.add_arg(character.to_string())
+                terminal_command.add_arg(&character.to_string())
             }
         } else {
             eprintln!("No argument given following a '--'.");
@@ -37,29 +36,3 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
     }
     parse(args[1..].to_vec(), terminal_command)
 }
-
-pub fn process_short_arg(arg: &str) -> Vec<char> {
-    let allowed_flags= ['v', 'V', 'r', 'f', 'F', 'i', 'h'];
-    let mut previous_flags = HashSet::new();
-    let mut arg_chars = Vec::new();
-
-    for flag in arg.chars() {
-        if !allowed_flags.contains(&flag) {
-            eprintln!("Unknown argument '-{}' .", flag);
-            exit(1);
-        }
-        if previous_flags.contains(&flag) {
-            eprintln!("Duplicated argument(s) '-{}'.", flag);
-            exit(1);
-        }
-        previous_flags.insert(flag);
-        arg_chars.push(flag);
-    }
-    arg_chars
-}
-pub fn process_long_arg(arg: &str) -> String{
-        return arg.to_string();
-        // eprintln!("Unknown argument '--{}'", arg);
-        // exit(1);
-    }
-

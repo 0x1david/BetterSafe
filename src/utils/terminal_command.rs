@@ -1,71 +1,83 @@
-use std::collections::HashMap;
-
-use super::Arguments;
-
-macro_rules! arg_map {
-    ($($key:expr => $value:expr),* $(,)?) => {{
-        let mut map = HashMap::new();
-        $( map.insert(String::from($key), $value); )*
-        map
-    }};
-}
+use std::process::exit;
 
 pub struct TerminalCommand {
     path: String,
-    arg_map: HashMap<String, Arguments>,
-    args: Vec<Arguments>,
+    force: bool,
+    interactive: bool,
+    recursive: bool,
+    directory: bool,
+    verbose: bool,
+    help: bool,
+    version: bool,
+    trash: bool,
+    abandon: bool,
+    restore: bool,
+    archive: bool,
+    portal: bool,
 }
-
 impl TerminalCommand {
-     pub fn new() -> Self {
-        let arg_map = arg_map! {
-            "force" => Arguments::Force,
-            "Force" => Arguments::Force,
-            "f" => Arguments::Force,
-            "F" => Arguments::Force,
-            "interactive" => Arguments::Interactive,
-            "Interactive" => Arguments::Interactive,
-            "i" => Arguments::Interactive,
-            "recursive" => Arguments::Recursive,
-            "Recursive" => Arguments::Recursive,
-            "r" => Arguments::Recursive,
-            "dir" => Arguments::Directory,
-            "Dir" => Arguments::Directory,
-            "verbose" => Arguments::Verbose,
-            "Verbose" => Arguments::Verbose,
-            "help" => Arguments::Help,
-            "Help" => Arguments::Help,
-            "version" => Arguments::Version,
-            "Version" => Arguments::Version,
-            "v" => Arguments::Version,
-            "trash" => Arguments::Trash,
-            "Trash" => Arguments::Trash,
-            "T" => Arguments::Trash,
-            "abandon" => Arguments::Abandon,
-            "Abandon" => Arguments::Abandon,
-            "restore" => Arguments::Restore,
-            "Restore" => Arguments::Restore,  
-            "archive" => Arguments::Archive,
-            "Archive" => Arguments::Archive,
-            "a" => Arguments::Archive,
-        };
+    pub fn new() -> Self {
         Self {
             path: String::new(),
-            arg_map,
-            args: Vec::new(),
-
+            force: false,
+            interactive: false,
+            recursive: false,
+            directory: false,
+            verbose: false,
+            help: false,
+            version: false,
+            trash: false,
+            abandon: false,
+            restore: false,
+            archive: false,
+            portal: false,
         }
     }
+
     pub fn add_path(&mut self, path: &str) {
         self.path = path.to_string();
         println!("Path: {}", path)
     }
-    pub fn add_arg(&mut self, arg: String) {
-        let argument = self.arg_map[&arg];
-        self.args.push(argument);
-        println!("Arg: {}", argument);
+    pub fn add_arg(&mut self, arg: &str) {
+        match arg {
+            "force" => self.force = true,
+            "Force" => self.force = true,
+            "f" => self.force = true,
+            "F" => self.force = true,
+            "interactive" => self.interactive = true,
+            "Interactive" => self.interactive = true,
+            "i" => self.interactive = true,
+            "recursive" => self.recursive = true,
+            "Recursive" => self.recursive = true,
+            "r" => self.recursive = true,
+            "dir" => self.directory = true,
+            "Dir" => self.directory = true,
+            "verbose" => self.verbose = true,
+            "Verbose" => self.verbose = true,
+            "help" => self.help = true,
+            "Help" => self.help = true,
+            "version" => self.version = true,
+            "Version" => self.version = true,
+            "v" => self.version = true,
+            "trash" => self.trash = true,
+            "Trash" => self.trash = true,
+            "T" => self.trash = true,
+            "abandon" => self.abandon = true,
+            "Abandon" => self.abandon = true,
+            "restore" => self.restore = true,
+            "Restore" => self.restore = true,
+            "archive" => self.archive = true,
+            "Archive" => self.archive = true,
+            "a" => self.archive = true,
+            "p" => self.portal = true,
+            "portal" => self.portal = true,
+            _ => {
+                eprintln!("Unrecognized argument '{}'", arg);
+                exit(1);
+            }
+        }
     }
-    pub fn execute_command(&self) {
+    pub fn execute(&self) {
         unimplemented!();
     }
 }
