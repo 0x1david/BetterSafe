@@ -1,5 +1,6 @@
 use std::process::exit;
 
+#[derive(Debug)]
 pub struct TerminalCommand {
     path: String,
     force: bool,
@@ -15,6 +16,7 @@ pub struct TerminalCommand {
     archive: bool,
     portal: bool,
 }
+
 impl TerminalCommand {
     pub fn new() -> Self {
         Self {

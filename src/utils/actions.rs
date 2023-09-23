@@ -22,3 +22,23 @@ pub fn remove(path: &String) -> () {
         }
     }
 }
+
+pub fn archive(path: &String) -> () {
+    unimplemented!();
+}
+
+pub fn trash(path: &String) -> () {
+    unimplemented!();
+}
+
+pub fn restore(path: &String) -> () {
+    unimplemented!();
+}
+
+pub fn abandon(path: &String) -> () {
+    unimplemented!();
+}
+
+pub fn portal(path: &String) -> () {
+    unimplemented!();
+}

@@ -22,7 +22,7 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
         };
 
         if second_char == '-' && arg.len() > 2 {
-            terminal_command.add_arg(&arg.to_string());
+            terminal_command.add_arg(&arg[2..].to_string());
         } else if second_char != '-' {
             for character in arg[1..].chars() {
                 terminal_command.add_arg(&character.to_string())

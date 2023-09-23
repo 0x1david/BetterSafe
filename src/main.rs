@@ -15,4 +15,6 @@ fn main() {
         exit(1);
     }
     let terminal_command = parse(args, &mut unparsed_command);
+    println!("{:?}", terminal_command);
+
 }
