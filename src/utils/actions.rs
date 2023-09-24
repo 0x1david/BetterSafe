@@ -78,20 +78,18 @@ fn get_alternate_path(cwd_option: Option<PathBuf>) -> String {
         },
     };
 
-    let archive_dir = get_archive_dir();
-    let home_dir = get_home_dir();
+    let archive_dir = get_archive_dir().to_string_lossy().to_string();
+    let home_dir = get_home_dir().to_string_lossy().to_string();
     let cwd_str = cwd.to_string_lossy().to_string();
-    let archive_dir_str = archive_dir.to_string_lossy().to_string();
-    let home_dir_str = home_dir.to_string_lossy().to_string();
 
     if cwd.starts_with(&home_dir) {
-        let target_path = cwd_str.replace(&home_dir_str, &archive_dir_str);
+        let target_path = cwd_str.replace(&home_dir, &archive_dir);
         return target_path;
     } else if cwd.starts_with(&archive_dir) {
-        let target_path = cwd_str.replace(&archive_dir_str, &archive_dir_str);
+        let target_path = cwd_str.replace(&archive_dir, &archive_dir);
         return target_path;
     } else {
-        return archive_dir_str;
+        return archive_dir;
     }
 }
 
