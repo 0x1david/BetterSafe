@@ -1,4 +1,5 @@
 use std::process::exit;
+use super::actions::{portal, archive, remove};
 
 #[derive(Debug)]
 pub struct TerminalCommand {
@@ -80,6 +81,8 @@ impl TerminalCommand {
         }
     }
     pub fn execute(&self) {
-        unimplemented!();
+        if self.portal {
+            let _ = portal();
+        } 
     }
 }

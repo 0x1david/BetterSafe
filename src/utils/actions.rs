@@ -1,6 +1,10 @@
-use super::constants::ARCHIVE_DIR;
+use super::constants::get_archive_dir;
+use std::env;
 use std::fs;
+use std::io;
+use std::path::Path;
 use std::process::exit;
+use std::process::Command;
 
 pub fn help() -> () {
     println!("You can use the same commands as in the rm command, refer to 'man rm'.");
@@ -14,13 +18,8 @@ pub fn version() -> () {
 
 pub fn remove(path: &String) -> () {
     println!("{} will be archived", path);
-    match fs::rename(path, ARCHIVE_DIR) {
-        Ok(()) => println!("{} has been archived", path),
-        Err(e) => {
-            eprintln!("Archiving Failed {}", e);
-            exit(1);
-        }
-    }
+    let archive_dir = get_archive_dir();
+    unimplemented!()
 }
 
 pub fn archive(path: &String) -> () {
@@ -39,6 +38,10 @@ pub fn abandon(path: &String) -> () {
     unimplemented!();
 }
 
-pub fn portal(path: &String) -> () {
-    unimplemented!();
+pub fn portal() -> io::Result<()> {
+    let archive_dir = get_archive_dir();
+    let shell = env::var("SHELL").unwrap_or_else(|_| "sh".into());
+    env::set_current_dir(&archive_dir)?;
+    Command::new(shell).status()?;
+    Ok(())
 }
