@@ -1,5 +1,6 @@
 use super::constants::{get_archive_dir, get_home_dir};
 use std::env;
+use std::fs::create_dir;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::process::exit;
@@ -31,32 +32,27 @@ pub fn get_alternate_path(working_directory_option: Option<PathBuf>) -> String {
     }
 }
 
-// TODO: Create Directories if the path for the file creation does not exist
-pub fn chain_create_directories(path: PathBuf) {
-    unimplemented!();
-}
-
 pub fn chain_climb_directories(target: PathBuf) {
-    let mut current_try = target;
-    let last_resort = get_archive_dir();
+    let mut current_directory = target;
+    let archive_source = get_archive_dir();
     loop {
-        match env::set_current_dir(&current_try) {
+        match env::set_current_dir(&current_directory) {
             Ok(_) => {
                 break;
             }
             Err(e) => match e.kind() {
                 ErrorKind::NotFound => {
-                    if current_try == last_resort {
+                    if current_directory == archive_source {
                         eprintln!(
                             "Failed to change directory even after ascending to {:?}",
-                            &last_resort
+                            &archive_source
                         );
                         exit(1);
                     }
-                    if let Some(parent) = current_try.parent() {
-                        current_try = parent.to_path_buf();
+                    if let Some(parent) = current_directory.parent() {
+                        current_directory = parent.to_path_buf();
                     } else {
-                        eprintln!("Reached root {:?}", &current_try);
+                        eprintln!("Reached root {:?}", &current_directory);
                         exit(1);
                     }
                 }
