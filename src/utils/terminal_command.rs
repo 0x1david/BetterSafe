@@ -1,5 +1,7 @@
+use crate::utils::constants::get_home_dir;
+
 use super::actions::{archive, default_action, portal};
-use std::process::exit;
+use std::{fs, process::exit};
 
 #[derive(Debug)]
 pub struct TerminalCommand {
@@ -38,7 +40,21 @@ impl TerminalCommand {
     }
 
     pub fn add_path(&mut self, path: &str) {
-        self.path = path.to_string();
+        let input_path = path.to_string();
+        let abs_path = if input_path.starts_with("/") {
+            input_path
+        } else if input_path.contains("~") {
+            input_path.replace("~", &get_home_dir().to_string_lossy().to_string())
+        } else {
+            match fs::canonicalize(input_path) {
+                Ok(abspath) => abspath.to_string_lossy().to_string(),
+                Err(e) => {
+                    eprintln!("Failed to process specified path");
+                    exit(1);
+                }
+            }
+        };
+        self.path = abs_path;
         println!("Path: {}", path)
     }
     pub fn add_arg(&mut self, arg: &str) {
@@ -83,6 +99,15 @@ impl TerminalCommand {
     pub fn execute(&self) {
         if self.portal {
             let _ = portal();
+        } else {
+            let status = default_action(&self.path);
+            match status {
+                Ok(_) => exit(1),
+                Err(e) => {
+                    eprintln!("Unexpected error: {}", e);
+                    exit(1);
+                }
+            }
         }
     }
 }
