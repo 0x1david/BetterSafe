@@ -68,3 +68,14 @@ pub fn chain_climb_directories(target: PathBuf) {
         }
     }
 }
+
+pub fn handle_error(e: ErrorKind) {
+    match e {
+        ErrorKind::NotFound => eprintln!("Error: The specified path does not exist."),
+        ErrorKind::PermissionDenied => eprintln!("Error: Permission denied."),
+        ErrorKind::InvalidInput => eprintln!("Error: The specified path is invalid."),
+        ErrorKind::AlreadyExists => eprintln!("Error: The file or directory already exists."),
+        _ => eprintln!("An unexpected error occurred: {:?}", e),
+    }
+    exit(1);
+}

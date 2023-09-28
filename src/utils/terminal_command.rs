@@ -1,6 +1,6 @@
 use crate::utils::constants::get_home_dir;
 
-use super::actions::{archive, default_action, portal};
+use super::actions::{archive, default_action, portal, trash};
 use std::{fs, process::exit};
 
 #[derive(Debug)]
@@ -69,6 +69,7 @@ impl TerminalCommand {
             "recursive" => self.recursive = true,
             "Recursive" => self.recursive = true,
             "r" => self.recursive = true,
+            "d" => self.directory = true,
             "dir" => self.directory = true,
             "Dir" => self.directory = true,
             "verbose" => self.verbose = true,
@@ -80,6 +81,7 @@ impl TerminalCommand {
             "v" => self.version = true,
             "trash" => self.trash = true,
             "Trash" => self.trash = true,
+            "t" => self.trash = true,
             "T" => self.trash = true,
             "abandon" => self.abandon = true,
             "Abandon" => self.abandon = true,
@@ -99,15 +101,11 @@ impl TerminalCommand {
     pub fn execute(&self) {
         if self.portal {
             let _ = portal();
+        }
+        if self.trash {
+            trash(&self.path, self.recursive, self.directory)
         } else {
-            let status = default_action(&self.path);
-            match status {
-                Ok(_) => exit(1),
-                Err(e) => {
-                    eprintln!("Unexpected error: {}", e);
-                    exit(1);
-                }
-            }
+            default_action(&self.path);
         }
     }
 }
