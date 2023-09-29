@@ -1,4 +1,5 @@
 pub mod actions;
+pub mod archive_scheduler;
 pub mod constants;
 pub mod helpers;
 pub mod parser;
