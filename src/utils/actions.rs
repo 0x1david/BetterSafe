@@ -1,9 +1,8 @@
-use crate::utils::helpers;
+use super::constants::get_home_dir;
 
 use super::helpers::{chain_climb_directories, get_alternate_path, handle_error};
 use std::env;
-use std::fs::{create_dir_all, remove_dir, remove_dir_all, remove_file, rename};
-use std::io::{self, Error, ErrorKind};
+use std::fs::{remove_dir, remove_dir_all, remove_file, rename};
 use std::path::PathBuf;
 use std::process::{exit, Command};
 
@@ -18,17 +17,20 @@ pub fn version() -> () {
 }
 
 pub fn default_action(path: &str) {
-    println!("{} will be archived", path);
     let path_buf = PathBuf::from(path);
-    let target_dir = get_alternate_path(Some(path_buf));
-    match rename(path, &target_dir) {
+    let (source_dir, target_dir) = if !path.contains(&get_home_dir().to_string_lossy().to_string())
+    {
+        println!("true");
+        (get_alternate_path(Some(path_buf)), path.to_string())
+    } else {
+        println!("false");
+        (path.to_string(), get_alternate_path(Some(path_buf)))
+    };
+    println!("target: {}, source {}", target_dir, source_dir);
+    match rename(&source_dir, &target_dir) {
         Ok(_) => exit(0),
         Err(e) => handle_error(e.kind()),
     }
-}
-
-pub fn archive(path: &String) -> () {
-    unimplemented!();
 }
 
 pub fn trash(path: &str, recursively: bool, directory: bool) {
@@ -56,12 +58,18 @@ pub fn trash(path: &str, recursively: bool, directory: bool) {
     }
 }
 
+// TODO: remove archive note
 pub fn restore(path: &String) -> () {
-    unimplemented!();
-}
-
-pub fn abandon(path: &String) -> () {
-    unimplemented!();
+    let path_buf = PathBuf::from(path);
+    let (source_dir, target_dir) = if path.contains(&get_home_dir().to_string_lossy().to_string()) {
+        (get_alternate_path(Some(path_buf)), path.to_string())
+    } else {
+        (path.to_string(), get_alternate_path(Some(path_buf)))
+    };
+    match rename(&source_dir, &target_dir) {
+        Ok(_) => exit(0),
+        Err(e) => handle_error(e.kind()),
+    }
 }
 
 pub fn portal() {

@@ -1,8 +1,7 @@
 use super::constants::{get_archive_dir, get_home_dir};
 use std::env;
-use std::fs::create_dir;
 use std::io::ErrorKind;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::exit;
 
 pub fn get_alternate_path(working_directory_option: Option<PathBuf>) -> String {

@@ -1,7 +1,7 @@
 use crate::utils::constants::get_home_dir;
 
-use super::actions::{archive, default_action, portal, trash};
-use std::{fs, process::exit};
+use super::actions::{default_action, help, portal, restore, trash, version};
+use std::{env::current_dir, process::exit};
 
 #[derive(Debug)]
 pub struct TerminalCommand {
@@ -14,7 +14,6 @@ pub struct TerminalCommand {
     help: bool,
     version: bool,
     trash: bool,
-    abandon: bool,
     restore: bool,
     archive: bool,
     portal: bool,
@@ -32,7 +31,6 @@ impl TerminalCommand {
             help: false,
             version: false,
             trash: false,
-            abandon: false,
             restore: false,
             archive: false,
             portal: false,
@@ -46,16 +44,16 @@ impl TerminalCommand {
         } else if input_path.contains("~") {
             input_path.replace("~", &get_home_dir().to_string_lossy().to_string())
         } else {
-            match fs::canonicalize(input_path) {
-                Ok(abspath) => abspath.to_string_lossy().to_string(),
+            match current_dir() {
+                Ok(cwd) => cwd.join(input_path).to_string_lossy().to_string(),
                 Err(e) => {
-                    eprintln!("Failed to process specified path");
+                    eprintln!("Failed to get current working directory: {}", e);
                     exit(1);
                 }
             }
         };
+        println!("Path: {}", abs_path);
         self.path = abs_path;
-        println!("Path: {}", path)
     }
     pub fn add_arg(&mut self, arg: &str) {
         match arg {
@@ -83,8 +81,6 @@ impl TerminalCommand {
             "Trash" => self.trash = true,
             "t" => self.trash = true,
             "T" => self.trash = true,
-            "abandon" => self.abandon = true,
-            "Abandon" => self.abandon = true,
             "restore" => self.restore = true,
             "Restore" => self.restore = true,
             "archive" => self.archive = true,
@@ -99,11 +95,16 @@ impl TerminalCommand {
         }
     }
     pub fn execute(&self) {
-        if self.portal {
+        if self.help {
+            help()
+        } else if self.version {
+            version()
+        } else if self.portal {
             let _ = portal();
-        }
-        if self.trash {
+        } else if self.trash {
             trash(&self.path, self.recursive, self.directory)
+        } else if self.restore {
+            restore(&self.path)
         } else {
             default_action(&self.path);
         }
