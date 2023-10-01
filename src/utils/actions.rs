@@ -1,3 +1,4 @@
+use super::archive_scheduler::ArchiveScheduler;
 use super::constants::get_home_dir;
 
 use super::helpers::{chain_climb_directories, get_alternate_path, handle_error};
@@ -16,7 +17,7 @@ pub fn version() -> () {
     println!("Current version is '0000.1a'");
 }
 
-pub fn default_action(path: &str) {
+pub fn default_action(path: &str, scheduler: ArchiveScheduler) {
     let path_buf = PathBuf::from(path);
     let (source_dir, target_dir) = if !path.contains(&get_home_dir().to_string_lossy().to_string())
     {

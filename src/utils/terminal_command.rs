@@ -1,6 +1,6 @@
 use crate::utils::constants::get_home_dir;
 
-use super::actions::{default_action, help, portal, restore, trash, version};
+use super::{actions::{default_action, help, portal, restore, trash, version}, archive_scheduler::{self, ArchiveScheduler}};
 use std::{env::current_dir, process::exit};
 
 #[derive(Debug)]
@@ -94,7 +94,7 @@ impl TerminalCommand {
             }
         }
     }
-    pub fn execute(&self) {
+    pub fn execute(&self, archive_scheduler: ArchiveScheduler) {
         if self.help {
             help()
         } else if self.version {
@@ -106,7 +106,7 @@ impl TerminalCommand {
         } else if self.restore {
             restore(&self.path)
         } else {
-            default_action(&self.path);
+            default_action(&self.path, archive_scheduler);
         }
     }
 }
