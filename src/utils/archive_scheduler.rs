@@ -5,11 +5,14 @@ use std::collections::BTreeMap;
 use std::fs::{self, OpenOptions};
 use std::io::{self, Read};
 use std::path::PathBuf;
+use std::process::exit;
 
 use super::constants::{get_schedule_json_path, FileType, ArchiveDuration};
 
 #[derive(Serialize, Deserialize)]
 pub struct ArchiveScheduler {
+    //TODO: Create second schedule where the structure is Path: Datetime to make restore way more
+    //efficient
     schedule: BTreeMap<DateTime<Utc>, (String, FileType)>,
     json_path: PathBuf,
 }
@@ -46,13 +49,46 @@ impl ArchiveScheduler {
     pub fn insert_record(&mut self, record: Record) {
         self.schedule.insert(record.date, (record.path, record.file_type));
     }
+    pub fn delete_record(&mut self, record_path: &str) {
+        let target = match Self::find_by_path(&self, &record_path) {
+            Some(target) => target,
+            None => {
+                eprintln!("Archive record not found, you can ignore this message.");
+                exit(1);
+            }
+        };
+
+        match self.schedule.remove(&target) {
+            Some(_) => (),
+            None => {
+                eprintln!("Couldn't remove an existing record, aborting");
+                exit(1);
+            }
+        }
+
+    }
     
+    fn find_by_path(&self, path: &str) -> Option<DateTime<Utc>> {
+       let found = self.schedule.iter().find_map(|(key, (searched_path, _))| {
+            if path == searched_path {
+                Some(key.clone())
+            } else {
+                None
+            }
+        });
+        found
+    }
     pub fn save_json(&self) -> serde_json::Result<()> {
         let json = serde_json::to_string_pretty(&self.schedule)?;
         fs::write(&self.json_path, json).expect("TODO:");
         Ok(())
     }
-    
+
+    pub fn debug_print_records(&self) {
+        for (key, (value, _)) in &self.schedule {
+            println!("{}: {}", key, value);
+        }
+    }
     pub fn handle_due_records(&mut self) {
         let now = Utc::now();
         let keys: Vec<_> = self.schedule.range(..now).map(|(k, _)| *k).collect();

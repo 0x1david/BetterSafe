@@ -17,6 +17,7 @@ pub struct TerminalCommand {
     restore: bool,
     archive: bool,
     portal: bool,
+    print_json: bool
 }
 
 impl TerminalCommand {
@@ -34,6 +35,7 @@ impl TerminalCommand {
             restore: false,
             archive: false,
             portal: false,
+            print_json: false,
         }
     }
 
@@ -88,6 +90,7 @@ impl TerminalCommand {
             "a" => self.archive = true,
             "p" => self.portal = true,
             "portal" => self.portal = true,
+            "debug-json" => self.print_json = true,
             _ => {
                 eprintln!("Unrecognized argument '{}'", arg);
                 exit(1);
@@ -97,6 +100,8 @@ impl TerminalCommand {
     pub fn execute(&self, archive_scheduler: &mut ArchiveScheduler) {
         if self.help {
             help()
+        } else if self.print_json {
+            archive_scheduler.debug_print_records()
         } else if self.version {
             version()
         } else if self.portal {

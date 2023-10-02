@@ -27,10 +27,10 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
     let (source_dir, target_dir) = if !path.contains(&get_home_dir().to_string_lossy().to_string())
     {
         println!("true");
-        (get_alternate_path(Some(path_buf)), path.to_string())
+        (get_alternate_path(Some(path_buf.clone())), path.to_string())
     } else {
         println!("false");
-        (path.to_string(), get_alternate_path(Some(path_buf)))
+        (path.to_string(), get_alternate_path(Some(path_buf.clone())))
     };
     println!("target: {}, source {}", target_dir, source_dir);
     let (duration, file_type) = if path_buf.is_file() {
@@ -55,6 +55,8 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
         }
         Err(e) => handle_error(e.kind()),
     }
+    scheduler.save_json();
+    exit(1);
 }
 
 pub fn trash(path: &str, recursively: bool, directory: bool) {
@@ -91,7 +93,11 @@ pub fn restore(path: &String, scheduler: &mut ArchiveScheduler) -> () {
         (path.to_string(), get_alternate_path(Some(path_buf)))
     };
     match rename(&source_dir, &target_dir) {
-        Ok(_) => exit(0),
+        Ok(_) => {
+            scheduler.delete_record(&source_dir);
+            scheduler.save_json();
+            exit(0);
+        }
         Err(e) => handle_error(e.kind()),
     }
 }

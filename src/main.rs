@@ -21,6 +21,5 @@ fn main() {
     archive_scheduler.handle_due_records();
 
     let terminal_command = parse(args, &mut unparsed_command);
-    println!("{:?}", terminal_command);
-    terminal_command.execute(archive_scheduler);
+    terminal_command.execute(&mut archive_scheduler);
 }
