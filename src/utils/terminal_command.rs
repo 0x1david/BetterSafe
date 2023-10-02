@@ -94,17 +94,17 @@ impl TerminalCommand {
             }
         }
     }
-    pub fn execute(&self, archive_scheduler: ArchiveScheduler) {
+    pub fn execute(&self, archive_scheduler: &mut ArchiveScheduler) {
         if self.help {
             help()
         } else if self.version {
             version()
         } else if self.portal {
-            let _ = portal();
+            portal();
         } else if self.trash {
             trash(&self.path, self.recursive, self.directory)
         } else if self.restore {
-            restore(&self.path)
+            restore(&self.path, archive_scheduler)
         } else {
             default_action(&self.path, archive_scheduler);
         }

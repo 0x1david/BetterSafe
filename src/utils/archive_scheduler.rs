@@ -6,7 +6,7 @@ use std::fs::{self, OpenOptions};
 use std::io::{self, Read};
 use std::path::PathBuf;
 
-use super::constants::{get_schedule_json_path, FileType};
+use super::constants::{get_schedule_json_path, FileType, ArchiveDuration};
 
 #[derive(Serialize, Deserialize)]
 pub struct ArchiveScheduler {
@@ -79,9 +79,9 @@ pub struct Record {
 }
 
 impl Record {
-    pub fn new(date: DateTime<Utc>, path: String, file_type: FileType) -> Self {
+    pub fn new(duration: ArchiveDuration , path: String, file_type: FileType) -> Self {
         Self {
-            date,
+            date: Utc::now() + duration.get_duration(),
             path,
             file_type,
         }
