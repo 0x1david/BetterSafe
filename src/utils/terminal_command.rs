@@ -54,7 +54,6 @@ impl TerminalCommand {
                 }
             }
         };
-        println!("Path: {}", abs_path);
         self.path = abs_path;
     }
     pub fn add_arg(&mut self, arg: &str) {
