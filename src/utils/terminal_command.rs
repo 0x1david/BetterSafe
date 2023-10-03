@@ -1,6 +1,6 @@
 use crate::utils::constants::get_home_dir;
 
-use super::{actions::{default_action, help, portal, restore, trash, version}, archive_scheduler::{self, ArchiveScheduler}};
+use super::{actions::{default_action, help, portal, restore, trash, version}, archive_scheduler::{ArchiveScheduler}};
 use std::{env::current_dir, process::exit};
 
 #[derive(Debug)]

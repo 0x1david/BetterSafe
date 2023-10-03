@@ -1,4 +1,4 @@
-use chrono::DateTime;
+
 
 use crate::utils::archive_scheduler::Record;
 use crate::utils::constants::{ArchiveDuration, FileType};
@@ -32,7 +32,6 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
         println!("false");
         (path.to_string(), get_alternate_path(Some(path_buf.clone())))
     };
-    println!("target: {}, source {}", target_dir, source_dir);
     let (duration, file_type) = if path_buf.is_file() {
         (ArchiveDuration::Medium, FileType::File)
     } else if path_buf.is_dir() {

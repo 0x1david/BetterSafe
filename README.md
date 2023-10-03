@@ -18,6 +18,7 @@ BetterSafe offers several command-line options to manage files effectively:
 - **`--archive` or `-a`**: Archive a file or folder.
 - **`--portal` or `-p`**: (Describe functionality).
 - **`--force` or `-f`**: Force an action.
+- **`--portal`**: Move to equivalent archive directory or its parent if it doesn't exist.
 - **`--interactive` or `-i`**: Run in interactive mode.
 - **`--recursive` or `-r`**: Perform actions recursively on directories.
 - **`--directory` or `-d`**: Perform actions on a directory.
