@@ -1,7 +1,7 @@
 # BetterSafe
 BetterSafe is a CLI tool developed to protect you from making dumb, irrevertable changes with a single command.
 
-It does this by archiving files you remove for a certain time, the more dangerous the action, the longer time to restore it from the archives.
+It does this by archiving files you remove for a certain time, the more dangerous the action, the longer time it takes to remove it from the archive permanently.
 
 By default arguments are similar to classic bash rm command - *Force*, *Interactive*, *Recursive*, *Dir*, *Verbose*
 
