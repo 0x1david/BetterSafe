@@ -5,7 +5,7 @@ It does this by archiving files you remove for a certain time, the more dangerou
 
 By default arguments are similar to classic bash rm command - *Force*, *Interactive*, *Recursive*, *Dir*, *Verbose*
 
-> **Disclaimer:** This project is principally intended for learning purposes as a newcomer to Rust. Contributions, advice, or suggestions are warmly welcomed, but please note, certain optimizations and improvements might never be delivered due to the learning-focused nature of this project.
+> **Disclaimer:** This project is principally intended for learning purposes as a newcomer to Rust. Contributions, advice, or suggestions are warmly welcomed, but please note, certain optimizations and improvements will never be delivered due to the learning-focused nature of this project.
 
 ## 🚀 Usage
 
@@ -32,7 +32,7 @@ $ bettersafe --trash /path/to/file
 ```
 ## 🌟 Contributing
 
-Anyone is welcome to contribute to BetterSafe! Whether it's reporting bugs, discussing improvements, or contributing code, we welcome you to join us!
+Anyone is welcome to contribute to BetterSafe! Whether it's reporting bugs, discussing improvements, or contributing code.
 
 - **To report a bug or discuss a feature**: Open a [new issue](https://github.com/0x1_david/BetterSafe/issues/new).
 - **To contribute code**: 
