@@ -4,38 +4,30 @@ use crate::utils::archive_scheduler::Record;
 use crate::utils::constants::{ArchiveDuration, FileType};
 
 use super::archive_scheduler::ArchiveScheduler;
-use super::constants::get_home_dir;
 
-use super::helpers::{chain_climb_directories, get_alternate_path, handle_error};
+use super::helpers::{chain_climb_directories, get_alternate_path, handle_error, determine_source_filesystem};
 use std::env;
 use std::fs::{remove_dir, remove_dir_all,read_dir , remove_file, rename};
 use std::path::PathBuf;
 use std::process::{exit, Command};
 
-pub fn help() -> () {
+pub fn help() {
     println!("You can use the same commands as in the rm command, refer to 'man rm'.");
     println!("");
     println!("etc");
 }
 
-pub fn version() -> () {
+pub fn version(){
     println!("Current version is '0000.1a'");
 }
 
 pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
     let path_buf = PathBuf::from(path);
-    let (source_dir, target_dir) = if !path.contains(&get_home_dir().to_string_lossy().to_string())
-    {
-        println!("true");
-        (get_alternate_path(Some(path_buf.clone())), path.to_string())
-    } else {
-        println!("false");
-        (path.to_string(), get_alternate_path(Some(path_buf.clone())))
-    };
+    let (target_dir, source_dir) = determine_source_filesystem(path);
     let (duration, file_type) = if path_buf.is_file() {
         (ArchiveDuration::Medium, FileType::File)
     } else if path_buf.is_dir() {
-        let mut entries = read_dir(path).expect("Path vality should have been verified already.");
+        let mut entries = read_dir(path).expect("Path validity should have been verified already.");
         match entries.next() {
             Some(_) => (ArchiveDuration::Long, FileType::Folder),
             None => (ArchiveDuration::Short, FileType::File) //TODO: remove instantly 
@@ -45,7 +37,7 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
         exit(1);
     };
 
- 
+    println!("source:{}    target:{}", source_dir, target_dir) ;
     match rename(&source_dir, &target_dir) {
         Ok(_) => {
             scheduler.insert_record(
@@ -54,7 +46,7 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
         }
         Err(e) => handle_error(e.kind()),
     }
-    scheduler.save_json();
+    let _ = scheduler.save_json();
     exit(1);
 }
 
@@ -84,17 +76,17 @@ pub fn trash(path: &str, recursively: bool, directory: bool) {
 }
 
 // TODO: remove archive note
-pub fn restore(path: &String, scheduler: &mut ArchiveScheduler) -> () {
-    let path_buf = PathBuf::from(path);
-    let (source_dir, target_dir) = if path.contains(&get_home_dir().to_string_lossy().to_string()) {
-        (get_alternate_path(Some(path_buf)), path.to_string())
-    } else {
-        (path.to_string(), get_alternate_path(Some(path_buf)))
-    };
+pub fn restore(path: &String, scheduler: &mut ArchiveScheduler) {
+    let (source_dir, target_dir) = determine_source_filesystem(path);
     match rename(&source_dir, &target_dir) {
         Ok(_) => {
             scheduler.delete_record(&source_dir);
-            scheduler.save_json();
+            let _ = match scheduler.save_json(){
+                Ok(_) => {}
+                Err(e) => {
+                    eprintln!("Could not save json with archive timers {}", e)
+                }
+            };
             exit(0);
         }
         Err(e) => handle_error(e.kind()),

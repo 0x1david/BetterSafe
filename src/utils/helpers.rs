@@ -1,4 +1,4 @@
-use super::constants::{get_archive_dir, get_home_dir};
+use super::constants::{get_archive_dir, get_home_dir_str};
 use std::env;
 use std::io::ErrorKind;
 use std::path::PathBuf;
@@ -17,7 +17,7 @@ pub fn get_alternate_path(working_directory_option: Option<PathBuf>) -> String {
     };
 
     let archive_dir = get_archive_dir().to_string_lossy().to_string();
-    let home_dir = get_home_dir().to_string_lossy().to_string();
+    let home_dir = get_home_dir_str();
     let working_directory_str = working_directory.to_string_lossy().to_string();
 
     if working_directory.starts_with(&home_dir) {
@@ -78,3 +78,17 @@ pub fn handle_error(e: ErrorKind) {
     }
     exit(1);
 }
+
+
+pub fn determine_source_filesystem(path: &str) -> (String, String) {
+    let home_dir = get_home_dir_str();
+    let path_buf = PathBuf::from(path);
+    let alternate = get_alternate_path(Some(path_buf.clone()));
+    
+    if path.contains(&home_dir) {
+        (alternate, path.to_string())
+    } else {
+        (path.to_string(), alternate)
+    }
+}
+
