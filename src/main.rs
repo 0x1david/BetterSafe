@@ -9,7 +9,7 @@ use crate::utils::archive_scheduler::ArchiveScheduler;
 fn main() {
     let mut unparsed_command = TerminalCommand::new();
     let mut args: Vec<String> = args().collect();
-    let mut archive_scheduler = ArchiveScheduler::new().expect("Failed connecting to the archive file.");
+    let mut archive_scheduler = ArchiveScheduler::build().expect("Failed connecting to the archive file.");
     if !args.is_empty() {
         args.remove(0);
     } else {

@@ -18,7 +18,7 @@ pub struct ArchiveScheduler {
 }
 
 impl ArchiveScheduler {
-    pub fn new() -> io::Result<Self> {
+    pub fn build() -> io::Result<Self> {
         let json_path = get_schedule_json_path();
         let mut file = OpenOptions::new()
             .read(true)

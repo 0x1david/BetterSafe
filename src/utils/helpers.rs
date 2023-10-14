@@ -86,9 +86,9 @@ pub fn determine_source_filesystem(path: &str) -> (String, String) {
     let alternate = get_alternate_path(Some(path_buf.clone()));
     
     if path.contains(&home_dir) {
-        (alternate, path.to_string())
-    } else {
         (path.to_string(), alternate)
+    } else {
+        (alternate, path.to_string())
     }
 }
 

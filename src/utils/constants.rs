@@ -2,11 +2,16 @@ use dirs;
 use std::path::PathBuf;
 use serde::{Serialize, Deserialize};
 pub fn get_archive_dir() -> PathBuf {
-    dirs::home_dir().expect("Cannot properly acces the file system on your device.").join(".archives")
+    dirs::home_dir()
+        .expect("Cannot properly acces the file system on your device.")
+        .join(".archives")
 }
 
 pub fn get_home_dir_str() -> String {
-        dirs::home_dir().expect("Cannot properly access the file system on your device.").to_string_lossy().to_string()
+        dirs::home_dir()
+        .expect("Cannot properly access the file system on your device.")
+        .to_string_lossy()
+        .to_string()
 }
 
 pub fn get_schedule_json_path() -> PathBuf {
