@@ -83,7 +83,7 @@ pub fn handle_error(e: ErrorKind) {
 pub fn determine_source_filesystem(path: &str) -> (String, String) {
     let home_dir = get_home_dir_str();
     let path_buf = PathBuf::from(path);
-    let alternate = get_alternate_path(Some(path_buf.clone()));
+    let alternate = get_alternate_path(Some(path_buf));
     
     if path.contains(&home_dir) {
         (path.to_string(), alternate)

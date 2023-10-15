@@ -71,7 +71,7 @@ impl ArchiveScheduler {
     fn find_by_path(&self, path: &str) -> Option<DateTime<Utc>> {
        let found = self.schedule.iter().find_map(|(key, (searched_path, _))| {
             if path == searched_path {
-                Some(key.clone())
+                Some(*key)
             } else {
                 None
             }
