@@ -1,13 +1,13 @@
-
-
 use crate::utils::archive_scheduler::Record;
 use crate::utils::constants::{ArchiveDuration, FileType};
 
 use super::archive_scheduler::ArchiveScheduler;
 
-use super::helpers::{chain_climb_directories, get_alternate_path, handle_error, determine_source_filesystem};
+use super::helpers::{
+    chain_climb_directories, determine_source_filesystem, get_alternate_path, handle_error,
+};
 use std::env;
-use std::fs::{remove_dir, remove_dir_all,read_dir , remove_file, rename};
+use std::fs::{read_dir, remove_dir, remove_dir_all, remove_file, rename};
 use std::path::PathBuf;
 use std::process::{exit, Command};
 
@@ -17,7 +17,7 @@ pub fn help() {
     println!("etc");
 }
 
-pub fn version(){
+pub fn version() {
     println!("Current version is '0000.1a'");
 }
 
@@ -30,20 +30,15 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
         let mut entries = read_dir(path).expect("Path validity should have been verified already.");
         match entries.next() {
             Some(_) => (ArchiveDuration::Long, FileType::Folder),
-            None => (ArchiveDuration::Short, FileType::File) //TODO: remove instantly 
+            None => (ArchiveDuration::Short, FileType::File), //TODO: remove instantly
         }
     } else {
         eprintln!("The path is neither a regular file nor a directory. Exiting.");
         exit(1);
     };
 
-    println!("source:{}    target:{}", source_dir, target_dir) ;
     match rename(&source_dir, &target_dir) {
-        Ok(_) => {
-            scheduler.insert_record(
-                    Record::new(duration, target_dir, file_type)
-            )
-        }
+        Ok(_) => scheduler.insert_record(Record::new(duration, target_dir, file_type)),
         Err(e) => handle_error(e.kind()),
     }
     let _ = scheduler.save_json();
@@ -81,7 +76,7 @@ pub fn restore(path: &String, scheduler: &mut ArchiveScheduler) {
     match rename(&source_dir, &target_dir) {
         Ok(_) => {
             scheduler.delete_record(&source_dir);
-            let _ = match scheduler.save_json(){
+            let _ = match scheduler.save_json() {
                 Ok(_) => {}
                 Err(e) => {
                     eprintln!("Could not save json with archive timers {}", e)
@@ -94,7 +89,7 @@ pub fn restore(path: &String, scheduler: &mut ArchiveScheduler) {
 }
 
 pub fn portal() {
-    let target_dir_str = get_alternate_path(None);
+    let target_dir_str = get_alternate_path::<PathBuf>(None);
     println!("{}", target_dir_str);
     let target_dir = PathBuf::from(&target_dir_str);
     let shell = env::var("SHELL").unwrap_or_else(|_| "sh".into());

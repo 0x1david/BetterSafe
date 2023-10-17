@@ -1,5 +1,8 @@
-
-use super::{actions::{default_action, help, portal, restore, trash, version}, archive_scheduler::ArchiveScheduler, constants::get_home_dir_str};
+use super::{
+    actions::{default_action, help, portal, restore, trash, version},
+    archive_scheduler::ArchiveScheduler,
+    constants::get_home_dir_str,
+};
 use std::{env::current_dir, process::exit};
 
 #[derive(Debug)]
@@ -16,7 +19,7 @@ pub struct TerminalCommand {
     restore: bool,
     archive: bool,
     portal: bool,
-    print_json: bool
+    print_json: bool,
 }
 
 impl TerminalCommand {

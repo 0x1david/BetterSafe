@@ -7,7 +7,7 @@ use std::io::{self, Read};
 use std::path::PathBuf;
 use std::process::exit;
 
-use super::constants::{get_schedule_json_path, FileType, ArchiveDuration};
+use super::constants::{get_schedule_json_path, ArchiveDuration, FileType};
 
 #[derive(Serialize, Deserialize)]
 pub struct ArchiveScheduler {
@@ -28,7 +28,7 @@ impl ArchiveScheduler {
 
         let mut content = String::new();
         file.read_to_string(&mut content)?;
-        
+
         let schedule = if content.is_empty() {
             BTreeMap::new()
         } else {
@@ -39,15 +39,16 @@ impl ArchiveScheduler {
                 )
             })?
         };
-        
+
         Ok(Self {
             schedule,
             json_path,
         })
     }
-    
+
     pub fn insert_record(&mut self, record: Record) {
-        self.schedule.insert(record.date, (record.path, record.file_type));
+        self.schedule
+            .insert(record.date, (record.path, record.file_type));
     }
     pub fn delete_record(&mut self, record_path: &str) {
         let target = match Self::find_by_path(&self, &record_path) {
@@ -65,11 +66,10 @@ impl ArchiveScheduler {
                 exit(1);
             }
         }
-
     }
-    
+
     fn find_by_path(&self, path: &str) -> Option<DateTime<Utc>> {
-       let found = self.schedule.iter().find_map(|(key, (searched_path, _))| {
+        let found = self.schedule.iter().find_map(|(key, (searched_path, _))| {
             if path == searched_path {
                 Some(*key)
             } else {
@@ -92,14 +92,15 @@ impl ArchiveScheduler {
     pub fn handle_due_records(&mut self) {
         let now = Utc::now();
         let keys: Vec<_> = self.schedule.range(..now).map(|(k, _)| *k).collect();
-        
+
         for key in keys {
             if let Some((path, file_type)) = self.schedule.remove(&key) {
-                Self::permanently_delete_file(file_type, path).unwrap_or_else(|e| eprintln!("Failed to delete: {}", e));
+                Self::permanently_delete_file(file_type, path)
+                    .unwrap_or_else(|e| eprintln!("Failed to delete: {}", e));
             }
         }
     }
-    
+
     pub fn permanently_delete_file(file_type: FileType, path: String) -> io::Result<()> {
         match file_type {
             FileType::File => fs::remove_file(path),
@@ -115,7 +116,7 @@ pub struct Record {
 }
 
 impl Record {
-    pub fn new(duration: ArchiveDuration , path: String, file_type: FileType) -> Self {
+    pub fn new(duration: ArchiveDuration, path: String, file_type: FileType) -> Self {
         Self {
             date: Utc::now() + duration.get_duration(),
             path,
@@ -123,4 +124,3 @@ impl Record {
         }
     }
 }
-

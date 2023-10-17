@@ -24,9 +24,9 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
         if second_char == '-' && arg.len() > 2 {
             terminal_command.add_arg(&arg[2..].to_string());
         } else if second_char != '-' {
-            arg[1..].chars().for_each(|character| {
-                terminal_command.add_arg(&character.to_string())
-            });
+            arg[1..]
+                .chars()
+                .for_each(|character| terminal_command.add_arg(&character.to_string()));
         } else {
             eprintln!("No argument given following a '--'.");
             exit(1);
