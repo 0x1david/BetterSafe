@@ -51,7 +51,7 @@ impl ArchiveScheduler {
             .insert(record.date, (record.path, record.file_type));
     }
     pub fn delete_record(&mut self, record_path: &str) {
-        let target = match Self::find_by_path(&self, &record_path) {
+        let target = match Self::find_by_path(self, record_path) {
             Some(target) => target,
             None => {
                 eprintln!("Archive record not found, you can ignore this message.");

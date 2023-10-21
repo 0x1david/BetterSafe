@@ -43,10 +43,10 @@ impl TerminalCommand {
 
     pub fn add_path(&mut self, path: &str) {
         let input_path = path.to_string();
-        let abs_path = if input_path.starts_with("/") {
+        let abs_path = if input_path.starts_with('/') {
             input_path
-        } else if input_path.contains("~") {
-            input_path.replace("~", &get_home_dir_str())
+        } else if input_path.contains('~') {
+            input_path.replace('~', &get_home_dir_str())
         } else {
             match current_dir() {
                 Ok(cwd) => cwd.join(input_path).to_string_lossy().to_string(),

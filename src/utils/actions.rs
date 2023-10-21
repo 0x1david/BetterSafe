@@ -12,9 +12,11 @@ use std::path::PathBuf;
 use std::process::{exit, Command};
 
 pub fn help() {
-    println!("You can use the same commands as in the rm command, refer to 'man rm'.");
-    println!("");
-    println!("etc");
+    println!(
+        "You can use the same commands as in the rm command, refer to 'man rm'.\n\
+         \n\
+         <Additional Information>"
+    );
 }
 
 pub fn version() {
@@ -24,6 +26,13 @@ pub fn version() {
 pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
     let path_buf = PathBuf::from(path);
     let (target_dir, source_dir) = determine_source_filesystem(path);
+
+    if !path_buf.is_file() && !path_buf.is_dir() {
+            eprintln!("The path is neither a regular file nor a directory. Exiting.");
+            exit(1);
+        }
+
+
     let (duration, file_type) = if path_buf.is_file() {
         (ArchiveDuration::Medium, FileType::File)
     } else if path_buf.is_dir() {
@@ -33,11 +42,10 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
             None => (ArchiveDuration::Short, FileType::File), //TODO: remove instantly
         }
     } else {
-        eprintln!("The path is neither a regular file nor a directory. Exiting.");
-        exit(1);
+        unreachable!();
     };
 
-    match rename(&source_dir, &target_dir) {
+    match rename(source_dir, &target_dir) {
         Ok(_) => scheduler.insert_record(Record::new(duration, target_dir, file_type)),
         Err(e) => handle_error(e.kind()),
     }
@@ -47,21 +55,21 @@ pub fn default_action(path: &str, scheduler: &mut ArchiveScheduler) {
 
 pub fn trash(path: &str, recursively: bool, directory: bool) {
     if recursively && directory {
-        match remove_dir_all(&path) {
+        match remove_dir_all(path) {
             Ok(_) => {
                 exit(0);
             }
             Err(e) => handle_error(e.kind()),
         }
     } else if directory {
-        match remove_dir(&path) {
+        match remove_dir(path) {
             Ok(_) => {
                 exit(0);
             }
             Err(e) => handle_error(e.kind()),
         }
     } else {
-        match remove_file(&path) {
+        match remove_file(path) {
             Ok(_) => {
                 exit(0);
             }
@@ -71,17 +79,17 @@ pub fn trash(path: &str, recursively: bool, directory: bool) {
 }
 
 // TODO: remove archive note
-pub fn restore(path: &String, scheduler: &mut ArchiveScheduler) {
+pub fn restore(path: &str, scheduler: &mut ArchiveScheduler) {
     let (source_dir, target_dir) = determine_source_filesystem(path);
-    match rename(&source_dir, &target_dir) {
+    match rename(&source_dir, target_dir) {
         Ok(_) => {
             scheduler.delete_record(&source_dir);
-            let _ = match scheduler.save_json() {
+            match scheduler.save_json() {
                 Ok(_) => {}
                 Err(e) => {
                     eprintln!("Could not save json with archive timers {}", e)
                 }
-            };
+            }
             exit(0);
         }
         Err(e) => handle_error(e.kind()),
@@ -90,12 +98,15 @@ pub fn restore(path: &String, scheduler: &mut ArchiveScheduler) {
 
 pub fn portal() {
     let target_dir_str = get_alternate_path::<PathBuf>(None);
-    println!("{}", target_dir_str);
     let target_dir = PathBuf::from(&target_dir_str);
-    let shell = env::var("SHELL").unwrap_or_else(|_| "sh".into());
+    
+    let shell = env::var("SHELL")
+        .unwrap_or_else(|_| "sh".into());
     chain_climb_directories(target_dir);
-    match Command::new(shell).status() {
-        Ok(_) => exit(0),
-        Err(e) => handle_error(e.kind()),
+
+    match Command::new(shell)
+        .status() {
+            Ok(_) => exit(0),
+            Err(e) => handle_error(e.kind()),
     }
 }

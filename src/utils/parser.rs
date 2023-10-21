@@ -9,7 +9,7 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
 
     let first_char = arg
         .chars()
-        .nth(0)
+        .next()
         .expect("Parse with no arguments should have returned.");
 
     if first_char == '-' {
@@ -22,7 +22,7 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
         };
 
         if second_char == '-' && arg.len() > 2 {
-            terminal_command.add_arg(&arg[2..].to_string());
+            terminal_command.add_arg(&arg[2..]);
         } else if second_char != '-' {
             arg[1..]
                 .chars()
@@ -32,7 +32,7 @@ pub fn parse(args: Vec<String>, terminal_command: &mut TerminalCommand) -> &mut 
             exit(1);
         }
     } else {
-        terminal_command.add_path(&arg);
+        terminal_command.add_path(arg);
     }
     parse(args[1..].to_vec(), terminal_command)
 }

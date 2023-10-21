@@ -23,16 +23,14 @@ pub fn get_alternate_path<T: AsRef<Path>>(working_dir_option: Option<T>) -> Stri
 
     let archive_dir = get_archive_dir();
     let home_dir = get_home_dir_str();
-    let working_directory_str = working_directory.to_string_lossy().to_string();
+    let working_directory_str = working_directory.to_string_lossy();
 
     if working_directory.starts_with(&home_dir) {
-        let target_path = working_directory_str.replace(&home_dir, &archive_dir);
-        return target_path;
+        working_directory_str.replace(&home_dir, &archive_dir)
     } else if working_directory.starts_with(&archive_dir) {
-        let target_path = working_directory_str.replace(&archive_dir, &archive_dir);
-        return target_path;
+        working_directory_str.replace(&archive_dir, &home_dir)
     } else {
-        return archive_dir;
+        archive_dir
     }
 }
 
@@ -50,9 +48,9 @@ pub fn chain_climb_directories<T: AsRef<Path>>(target: T) {
             Ok(_) => {
                 break;
             }
-            Err(ref e) => match e.kind() {
+            Err(e) => match e.kind() {
                 ErrorKind::NotFound => {
-                    if current_directory.to_string_lossy().to_string() == archive_source {
+                    if current_directory.to_string_lossy() == archive_source {
                         eprintln!(
                             "Failed to change directory even after ascending to {:?}",
                             &archive_source
@@ -81,7 +79,7 @@ pub fn chain_climb_directories<T: AsRef<Path>>(target: T) {
 
 /// Handles common IO errors by printing an appropriate error message to stderr.
 /// Exits the program with a non-zero exit code for all handled errors.
-pub fn handle_error(ref e: ErrorKind) {
+pub fn handle_error(e: ErrorKind) {
     match e {
         ErrorKind::NotFound => eprintln!("Error: The specified path does not exist."),
         ErrorKind::PermissionDenied => eprintln!("Error: Permission denied."),
