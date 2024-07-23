@@ -16,7 +16,6 @@ BetterSafe offers several command-line options to manage files effectively:
 - **`--trash` or `-t`**: Move a file or folder to trash.
 - **`--restore`**: Restore a previously trashed file or folder.
 - **`--archive` or `-a`**: Archive a file or folder.
-- **`--portal` or `-p`**: (Describe functionality).
 - **`--force` or `-f`**: Force an action.
 - **`--portal`**: Move to equivalent archive directory or its parent if it doesn't exist.
 - **`--interactive` or `-i`**: Run in interactive mode.
